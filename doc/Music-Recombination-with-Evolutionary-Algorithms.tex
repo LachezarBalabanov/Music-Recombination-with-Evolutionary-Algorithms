@@ -1,0 +1,78 @@
+\documentclass[12pt,twoside,openright]{memoir}
+
+% ==== Page Setup for KDP 5" x 8" Trim Size (Two-Sided) ====
+\usepackage[paperwidth=5in, paperheight=8in,
+            top=0.75in, bottom=0.75in,
+            inner=0.875in, outer=0.625in]{geometry}
+
+% ==== Fonts and Typography ====
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+
+% ==== Other Useful Packages ====
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{imakeidx}
+
+% ==== Paragraph and Spacing ====
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0.5em}
+\OnehalfSpacing
+\frenchspacing
+
+% ==== Header and Footer ====
+\pagestyle{fancy}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\rightmark}
+\fancyfoot{}
+
+% ==== Images Location ====
+\graphicspath{{images/}}
+
+% ==== Title Page ====
+\title{\Huge Music Recombination with Evolutionary Algorithms}
+\author{\Large Lachezar Balabanov, Todor Balabanov, Petar Tomov}
+\date{19 Jun 2025}
+
+% ==== Index Generation ====
+\onecolumn
+\makeindex[columns=2, title=Index, intoc]
+
+% ==== Control of the Contents ====
+\includeonly{
+	chapters/copyrights,
+	chapters/contents,
+	chapters/introduction,
+	chapters/conclusion,
+	chapters/authors,
+	chapters/bibliography,
+	chapters/index,
+}
+
+% ==== Begin Document ====
+\begin{document}
+
+\maketitle
+
+\frontmatter
+
+\cleardoublepage\include{chapters/copyrights}
+\cleardoublepage\include{chapters/contents}
+
+\mainmatter
+
+\cleardoublepage\include{chapters/introduction}
+\cleardoublepage\include{chapters/conclusion}
+
+\backmatter
+
+\cleardoublepage\include{chapters/authors}
+\cleardoublepage\include{chapters/bibliography}
+\cleardoublepage\include{chapters/index}
+
+\end{document}
