@@ -39,8 +39,6 @@ public class MIDIDERMIServer {
 	 *            Command line parameters.
 	 */
 	public static void main(String[] args) {
-		System.setSecurityManager(new RMISecurityManager());
-
 		MIDIDERMIImplement implementation = null;
 
 		try {
@@ -63,7 +61,7 @@ public class MIDIDERMIServer {
 				 * Minimum pool subset.
 				 */
 				try {
-					minPoolSubset = (new Integer(args[i + 1])).intValue();
+					minPoolSubset = Integer.parseInt(args[i + 1]);
 				} catch (Exception ex) {
 					minPoolSubset = 2;
 				}
@@ -72,7 +70,7 @@ public class MIDIDERMIServer {
 				 * Maximum pool subset.
 				 */
 				try {
-					maxPoolSubset = (new Integer(args[i + 1])).intValue();
+					maxPoolSubset = Integer.parseInt(args[i + 1]);
 				} catch (Exception ex) {
 					maxPoolSubset = 2;
 				}
@@ -81,7 +79,7 @@ public class MIDIDERMIServer {
 				 * Minimum epochs.
 				 */
 				try {
-					implementation.setMinNumEpochs((new Integer(args[i + 1])).intValue());
+					implementation.setMinNumEpochs(Integer.parseInt(args[i + 1]));
 				} catch (Exception ex) {
 					implementation.setMinNumEpochs(0);
 				}
@@ -90,7 +88,7 @@ public class MIDIDERMIServer {
 				 * Maximum epochs.
 				 */
 				try {
-					implementation.setMaxNumEpochs((new Integer(args[i + 1])).intValue());
+					implementation.setMaxNumEpochs(Integer.parseInt(args[i + 1]));
 				} catch (Exception ex) {
 					implementation.setMaxNumEpochs(0);
 				}
@@ -99,7 +97,7 @@ public class MIDIDERMIServer {
 				 * Load random melodies.
 				 */
 				try {
-					randomMelodiesAmount = (new Integer(args[i + 1])).intValue();
+					randomMelodiesAmount = Integer.parseInt(args[i + 1]);
 				} catch (Exception ex) {
 					randomMelodiesAmount = 0;
 				}
@@ -108,7 +106,7 @@ public class MIDIDERMIServer {
 				 * Load fractal melodies.
 				 */
 				try {
-					fractalMelodiesAmount = (new Integer(args[i + 1])).intValue();
+					fractalMelodiesAmount = Integer.parseInt(args[i + 1]);
 				} catch (Exception ex) {
 					fractalMelodiesAmount = 0;
 				}

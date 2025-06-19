@@ -25,8 +25,9 @@
 
 package eu.veldsoft.mididermi.common;
 
-import java.awt.Graphics;
 import java.io.Serializable;
+
+import javafx.scene.canvas.GraphicsContext;
 
 import eu.veldsoft.mididermi.base.Population;
 
@@ -107,7 +108,7 @@ public class MIDIDERMITask implements Serializable {
 	 * @param g
 	 *            Graphics context.
 	 */
-	public void setGraphics(Graphics g) {
+	public void setGraphics(GraphicsContext g) {
 		population.setGraphics(g);
 	}
 

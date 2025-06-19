@@ -26,8 +26,6 @@
 package eu.veldsoft.mididermi.base;
 
 import java.util.Vector;
-import java.awt.Color;
-import java.awt.Graphics;
 import java.io.Serializable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -37,6 +35,9 @@ import java.io.ByteArrayOutputStream;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.MidiSystem;
+
+import javafx.scene.paint.Color;
+import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Differential evolution population class. Implementation of genetic algorithm
@@ -66,24 +67,24 @@ public class Population implements Cloneable, Serializable {
 					Note note = melodyPaying.getNoteOn(position);
 
 					if (note != null) {
-						int red = g.getColor().getRed();
-						int green = g.getColor().getGreen();
-						int blue = g.getColor().getBlue();
-						g.setColor(new Color((red + note.getNote()) % 256, (green + note.getVelocity()) % 256, (blue + note.getDuration()) % 256));
+						double red = ((Color)g.getStroke()).getRed();
+						double green = ((Color)g.getStroke()).getGreen();
+						double blue = ((Color)g.getStroke()).getBlue();
+						g.setStroke(Color.rgb((int)(red + note.getNote()) % 256, (int)(green + note.getVelocity()) % 256, (int)(blue + note.getDuration()) % 256));
 					}
 
-					int x = (int) (g.getClipBounds().x + ((double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength()) * g.getClipBounds().width);
-					int y = (int) (g.getClipBounds().y + ((double) sequencer.getMicrosecondLength() / (double) sequencer.getMicrosecondPosition()) + Math.random() * g.getClipBounds().height) % g.getClipBounds().height;
+					//TODO int x = (int) (g.getClipBounds().x + ((double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength()) * g.getClipBounds().width);
+					//TODO int y = (int) (g.getClipBounds().y + ((double) sequencer.getMicrosecondLength() / (double) sequencer.getMicrosecondPosition()) + Math.random() * g.getClipBounds().height) % g.getClipBounds().height;
 
-					g.drawLine(x - 2, y, x - 2, y);
-					g.drawLine(x, y - 2, x, y - 2);
-					g.drawLine(x - 1, y, x - 1, y);
-					g.drawLine(x, y - 1, x, y - 1);
-					g.drawLine(x, y, x, y);
-					g.drawLine(x + 1, y, x + 1, y);
-					g.drawLine(x, y + 1, x, y + 1);
-					g.drawLine(x + 2, y, x + 2, y);
-					g.drawLine(x, y + 2, x, y + 2);
+					//TODO g.strokeLine(x - 2, y, x - 2, y);
+					//TODO g.strokeLine(x, y - 2, x, y - 2);
+					//TODO g.strokeLine(x - 1, y, x - 1, y);
+					//TODO g.strokeLine(x, y - 1, x, y - 1);
+					//TODO g.strokeLine(x, y, x, y);
+					//TODO g.strokeLine(x + 1, y, x + 1, y);
+					//TODO g.strokeLine(x, y + 1, x, y + 1);
+					//TODO g.strokeLine(x + 2, y, x + 2, y);
+					//TODO g.strokeLine(x, y + 2, x, y + 2);
 				}
 
 				try {
@@ -151,7 +152,7 @@ public class Population implements Cloneable, Serializable {
 	/**
 	 * Graphics context to visualize music information.
 	 */
-	private Graphics g = null;
+	private GraphicsContext g = null;
 
 	/**
 	 * Constructor without parameters. Internal structure is created during
@@ -373,7 +374,7 @@ public class Population implements Cloneable, Serializable {
 	 * @param g
 	 *            Graphics context.
 	 */
-	public void setGraphics(Graphics g) {
+	public void setGraphics(GraphicsContext g) {
 		this.g = g;
 	}
 }

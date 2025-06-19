@@ -141,10 +141,10 @@ public class DatabaseMediator {
 				while (tokenizer.hasMoreElements()) {
 					Note note = new Note();
 					try {
-						note.setNote((new Integer((String) tokenizer.nextElement())).intValue());
-						note.setOffset((new Integer((String) tokenizer.nextElement())).intValue());
-						note.setDuration((new Integer((String) tokenizer.nextElement())).intValue());
-						note.setVelocity((new Integer((String) tokenizer.nextElement())).intValue());
+						note.setNote(Integer.parseInt((String) tokenizer.nextElement()));
+						note.setOffset(Integer.parseInt((String) tokenizer.nextElement()));
+						note.setDuration(Integer.parseInt((String) tokenizer.nextElement()));
+						note.setVelocity(Integer.parseInt((String) tokenizer.nextElement()));
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}

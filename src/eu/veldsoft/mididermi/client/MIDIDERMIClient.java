@@ -25,19 +25,21 @@
 
 package eu.veldsoft.mididermi.client;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.net.MalformedURLException;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.rmi.Naming;
-import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
-import java.rmi.RMISecurityManager;
-
-import javax.swing.JApplet;
-import javax.swing.JFrame;
+import java.rmi.RemoteException;
+import java.net.MalformedURLException;
 
 import eu.veldsoft.mididermi.common.MIDIDERMITask;
 import eu.veldsoft.mididermi.common.MIDIDERMIInterface;
@@ -47,7 +49,7 @@ import eu.veldsoft.mididermi.common.MIDIDERMIInterface;
  * responsible to request calculating task from the server. In parallel of the
  * calculation process user evaluation is done.
  */
-public class MIDIDERMIClient extends JApplet implements KeyListener, Runnable {
+public class MIDIDERMIClient extends Application implements Runnable {
 	/**
 	 * Default serial version uid.
 	 */
@@ -64,48 +66,39 @@ public class MIDIDERMIClient extends JApplet implements KeyListener, Runnable {
 	private MIDIDERMITask task = null;
 
 	/**
-	 * Perform music playing and scoring.
+	 * Graphic context.
 	 */
-	private void perform() {
-		try {
-			if (task == null) {
-				task = simpleServerObject.request();
-
-				Graphics g = this.getGraphics();
-				g.setClip(this.getX(), this.getY(), this.getWidth(), this.getHeight());
-				task.setGraphics(g);
-
-				(new Thread(this)).start();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	/**
-	 * Standard key listener key pressed method.
-	 */
-	public void keyPressed(KeyEvent event) {
-	}
+	private GraphicsContext graphicsContext;
 
 	/**
 	 * Standard key listener key released method. By pressing up or down arrow
 	 * user is able to change the score of the melody.
 	 */
-	public void keyReleased(KeyEvent event) {
-		if (event.getKeyCode() == KeyEvent.VK_UP) {
+	private void keyReleased(KeyEvent event) {
+		if (event.getCode() == KeyCode.KP_UP) {
 			task.scoreUp();
 		}
 
-		if (event.getKeyCode() == KeyEvent.VK_DOWN) {
+		if (event.getCode() == KeyCode.KP_DOWN) {
 			task.scoreDown();
 		}
 	}
 
 	/**
-	 * Standard key listener key typed method.
+	 * Perform music playing and scoring.
 	 */
-	public void keyTyped(KeyEvent event) {
+	private void perform() {
+		if (task != null) {
+			return;
+		}
+
+		try {
+			task = simpleServerObject.request();
+			task.setGraphics(graphicsContext);
+			new Thread(this).start();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	/**
@@ -115,42 +108,36 @@ public class MIDIDERMIClient extends JApplet implements KeyListener, Runnable {
 	 *            Address of RMI remote server.
 	 */
 	public void obtainRmiObject(String address) {
-		System.setSecurityManager(new RMISecurityManager());
-
 		try {
 			simpleServerObject = (MIDIDERMIInterface) Naming.lookup("rmi://" + address + "/MIDIDERMIImplementInstance");
-		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
-		} catch (RemoteException ex) {
-			ex.printStackTrace();
-		} catch (NotBoundException ex) {
+		} catch (MalformedURLException | RemoteException | NotBoundException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	/**
-	 * Standard applet init method.
+	 * Standard application init method.
 	 */
-	public void init() {
-		this.addKeyListener(this);
+	@Override
+	public void start(Stage primaryStage) {
+		String address = getParameters().getRaw().get(0);
+		obtainRmiObject(address);
 
-		setSize(640, 480);
-		setLocation(0, 0);
+		Canvas canvas = new Canvas(640, 480);
+		graphicsContext = canvas.getGraphicsContext2D();
+		graphicsContext.setFill(Color.BLACK);
+		graphicsContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-		try {
-			String address = getParameter("rmi-server-address");
-			if (address != null) {
-				obtainRmiObject(address);
-			}
-		} catch (Exception ex) {
-			/*
-			 * Do not print anything because information is provided in main()
-			 * when code is executed as stand-alone application.
-			 */
-		}
+		StackPane root = new StackPane(canvas);
+		Scene scene = new Scene(root, 640, 480);
 
-		setBackground(Color.BLACK);
-		requestFocus();
+		scene.setOnKeyReleased(this::keyReleased);
+
+		primaryStage.setTitle("MIDIDERMI Client (JavaFX)");
+		primaryStage.setScene(scene);
+		primaryStage.show();
+
+		canvas.requestFocus();
 
 		perform();
 	}
@@ -160,7 +147,12 @@ public class MIDIDERMIClient extends JApplet implements KeyListener, Runnable {
 	 *
 	 * http://java.sys-con.com/read/46096.htm
 	 */
+	@Override
 	public void run() {
+		if (task == null) {
+			return;
+		}
+
 		task.calculate();
 
 		try {
@@ -169,7 +161,7 @@ public class MIDIDERMIClient extends JApplet implements KeyListener, Runnable {
 			ex.printStackTrace();
 		}
 
-		task = null;
+		Platform.runLater(() -> task = null);
 	}
 
 	/**
@@ -180,16 +172,11 @@ public class MIDIDERMIClient extends JApplet implements KeyListener, Runnable {
 	 *            Command line parameters.
 	 */
 	public static void main(String[] args) {
-		JFrame frame = new JFrame("MIDIDERMI client ...");
-		frame.setSize(640, 480);
+		if (args.length == 0) {
+			System.err.println("RMI server address required as argument.");
+			System.exit(1);
+		}
 
-		MIDIDERMIClient applet = new MIDIDERMIClient();
-		applet.obtainRmiObject(args[0]);
-
-		frame.add(applet);
-		frame.setVisible(true);
-
-		applet.init();
-		applet.start();
+		launch(args);
 	}
 }
