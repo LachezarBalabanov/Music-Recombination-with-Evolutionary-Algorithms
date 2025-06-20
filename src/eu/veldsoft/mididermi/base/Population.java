@@ -37,6 +37,7 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.MidiSystem;
 
 import javafx.scene.paint.Color;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
@@ -61,32 +62,6 @@ public class Population implements Cloneable, Serializable {
 		 */
 		public void run() {
 			while (true) {
-				if (g != null && sequencer != null && sequencer.isRunning() == true) {
-					double position = (double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength();
-
-					Note note = melodyPaying.getNoteOn(position);
-
-					if (note != null) {
-						double red = ((Color)g.getStroke()).getRed();
-						double green = ((Color)g.getStroke()).getGreen();
-						double blue = ((Color)g.getStroke()).getBlue();
-						g.setStroke(Color.rgb((int)(red + note.getNote()) % 256, (int)(green + note.getVelocity()) % 256, (int)(blue + note.getDuration()) % 256));
-					}
-
-					//TODO int x = (int) (g.getClipBounds().x + ((double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength()) * g.getClipBounds().width);
-					//TODO int y = (int) (g.getClipBounds().y + ((double) sequencer.getMicrosecondLength() / (double) sequencer.getMicrosecondPosition()) + Math.random() * g.getClipBounds().height) % g.getClipBounds().height;
-
-					//TODO g.strokeLine(x - 2, y, x - 2, y);
-					//TODO g.strokeLine(x, y - 2, x, y - 2);
-					//TODO g.strokeLine(x - 1, y, x - 1, y);
-					//TODO g.strokeLine(x, y - 1, x, y - 1);
-					//TODO g.strokeLine(x, y, x, y);
-					//TODO g.strokeLine(x + 1, y, x + 1, y);
-					//TODO g.strokeLine(x, y + 1, x, y + 1);
-					//TODO g.strokeLine(x + 2, y, x + 2, y);
-					//TODO g.strokeLine(x, y + 2, x, y + 2);
-				}
-
 				try {
 					Thread.sleep(REDRAW_DELAY);
 				} catch (InterruptedException ex) {
@@ -95,6 +70,40 @@ public class Population implements Cloneable, Serializable {
 					 * sleeping mode.
 					 */
 				}
+
+				if(sequencer == null) {
+					continue;
+				}
+
+				if(sequencer.isRunning() == false) {
+					continue;
+				}
+
+					double position = (double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength();
+
+					Note note = melodyPaying.getNoteOn(position);
+
+					GraphicsContext context = canvas.getGraphicsContext2D();
+
+					if (note != null) {
+						double red = ((Color)context.getStroke()).getRed()*255;
+						double green = ((Color)context.getStroke()).getGreen()*255;
+						double blue = ((Color)context.getStroke()).getBlue()*255;
+						context.setStroke(Color.rgb((int)(red + note.getNote()) % 256, (int)(green + note.getVelocity()) % 256, (int)(blue + note.getDuration()) % 256));
+					}
+
+					int x = (int) (((double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength()) * (int)canvas.getWidth());
+					int y = (int) (((double) sequencer.getMicrosecondLength() / (double) sequencer.getMicrosecondPosition()) + Math.random() * canvas.getHeight()) % (int)canvas.getHeight();
+
+					context.strokeLine(x - 2, y, x - 2, y);
+					context.strokeLine(x, y - 2, x, y - 2);
+					context.strokeLine(x - 1, y, x - 1, y);
+					context.strokeLine(x, y - 1, x, y - 1);
+					context.strokeLine(x, y, x, y);
+					context.strokeLine(x + 1, y, x + 1, y);
+					context.strokeLine(x, y + 1, x, y + 1);
+					context.strokeLine(x + 2, y, x + 2, y);
+					context.strokeLine(x, y + 2, x, y + 2);
 			}
 		}
 	}
@@ -150,9 +159,9 @@ public class Population implements Cloneable, Serializable {
 	private Sequencer sequencer = null;
 
 	/**
-	 * Graphics context to visualize music information.
+	 * Graphics canvas to visualize music information.
 	 */
-	private GraphicsContext g = null;
+	private Canvas canvas = null;
 
 	/**
 	 * Constructor without parameters. Internal structure is created during
@@ -360,8 +369,9 @@ public class Population implements Cloneable, Serializable {
 
 		population.offspring = new Vector<Melody>();
 
-		for (int i = 0; i < offspring.size(); i++)
+		for (int i = 0; i < offspring.size(); i++) {
 			population.offspring.add((Melody) (offspring.elementAt(i)).clone());
+		}
 
 		population.size = size;
 
@@ -369,12 +379,12 @@ public class Population implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Set active graphics context.
+	 * Set active graphics canvas.
 	 *
-	 * @param g
-	 *            Graphics context.
+	 * @param canvas
+	 *            Graphics canvas.
 	 */
-	public void setGraphics(GraphicsContext g) {
-		this.g = g;
+	public void setGraphics(Canvas canvas) {
+		this.canvas = canvas;
 	}
 }

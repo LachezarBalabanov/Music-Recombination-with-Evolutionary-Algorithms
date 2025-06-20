@@ -66,9 +66,9 @@ public class MIDIDERMIClient extends Application implements Runnable {
 	private MIDIDERMITask task = null;
 
 	/**
-	 * Graphic context.
+	 * Graphic canvas.
 	 */
-	private GraphicsContext graphicsContext;
+	private Canvas canvas;
 
 	/**
 	 * Standard key listener key released method. By pressing up or down arrow
@@ -94,7 +94,7 @@ public class MIDIDERMIClient extends Application implements Runnable {
 
 		try {
 			task = simpleServerObject.request();
-			task.setGraphics(graphicsContext);
+			task.setGraphics(canvas);
 			new Thread(this).start();
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -123,10 +123,10 @@ public class MIDIDERMIClient extends Application implements Runnable {
 		String address = getParameters().getRaw().get(0);
 		obtainRmiObject(address);
 
-		Canvas canvas = new Canvas(640, 480);
-		graphicsContext = canvas.getGraphicsContext2D();
-		graphicsContext.setFill(Color.BLACK);
-		graphicsContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		canvas = new Canvas(640, 480);
+		GraphicsContext context = canvas.getGraphicsContext2D();
+		context.setFill(Color.BLACK);
+		context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
 		StackPane root = new StackPane(canvas);
 		Scene scene = new Scene(root, 640, 480);
