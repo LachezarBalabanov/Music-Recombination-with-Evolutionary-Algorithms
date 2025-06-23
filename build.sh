@@ -11,16 +11,16 @@ javac -d ./bin ./src/eu/veldsoft/mididermi/providers/*.java -classpath ./bin
 javac -d ./bin ./src/eu/veldsoft/mididermi/server/*.java -classpath ./bin
 javac --module-path ~/javafx-sdk-24.0.1/lib --add-modules javafx.controls,javafx.fxml -d ./bin ./src/eu/veldsoft/mididermi/client/*.java -classpath ./bin
 
-cpy ./src/client.html ./bin/client.html
-cpy ./src/database.properties ./bin/database.properties
+cp ./src/client.html ./bin/client.html
+cp ./src/database.properties ./bin/database.properties
 
 cd ./bin
 
-rmiregistry
+rmiregistry &
 
 echo RMI registry started ...
 
-java -cp .;../lib/postgresql-42.7.7.jar -Djava.rmi.server.codebase=file:/tmp/ -Djava.rmi.server.hostname=127.0.0.1 -Djava.security.policy=../wideopen.policy eu.veldsoft.mididermi.server.MIDIDERMIServer -MINPOOL 2 -MAXPOOL 30 -MINEPOCHS 1 -MAXEPOCHS 5 -LR 1 -LT 1 -LD -LF -SD -SF
+java --class-path .:../lib/postgresql-42.7.7.jar -Djava.rmi.server.codebase=file:/tmp/ -Djava.rmi.server.hostname=127.0.0.1 -Djava.security.policy=../wideopen.policy eu.veldsoft.mididermi.server.MIDIDERMIServer -MINPOOL 2 -MAXPOOL 30 -MINEPOCHS 1 -MAXEPOCHS 5 -LR 1 -LT 1 -LD -LF -SD -SF
 
 echo RMI server application registered ...
 

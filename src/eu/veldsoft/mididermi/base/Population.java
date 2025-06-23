@@ -79,31 +79,31 @@ public class Population implements Cloneable, Serializable {
 					continue;
 				}
 
-					double position = (double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength();
+				double position = (double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength();
 
-					Note note = melodyPaying.getNoteOn(position);
+				Note note = melodyPaying.getNoteOn(position);
 
-					GraphicsContext context = canvas.getGraphicsContext2D();
+				GraphicsContext context = canvas.getGraphicsContext2D();
 
-					if (note != null) {
-						double red = ((Color)context.getStroke()).getRed()*255;
-						double green = ((Color)context.getStroke()).getGreen()*255;
-						double blue = ((Color)context.getStroke()).getBlue()*255;
-						context.setStroke(Color.rgb((int)(red + note.getNote()) % 256, (int)(green + note.getVelocity()) % 256, (int)(blue + note.getDuration()) % 256));
-					}
+				if (note != null) {
+					double red = ((Color)context.getStroke()).getRed()*255;
+					double green = ((Color)context.getStroke()).getGreen()*255;
+					double blue = ((Color)context.getStroke()).getBlue()*255;
+					context.setStroke(Color.rgb((int)(red + note.getNote()) % 256, (int)(green + note.getVelocity()) % 256, (int)(blue + note.getDuration()) % 256));
+				}
 
-					int x = (int) (((double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength()) * (int)canvas.getWidth());
-					int y = (int) (((double) sequencer.getMicrosecondLength() / (double) sequencer.getMicrosecondPosition()) + Math.random() * canvas.getHeight()) % (int)canvas.getHeight();
+				int x = (int) (((double) sequencer.getMicrosecondPosition() / (double) sequencer.getMicrosecondLength()) * (int)canvas.getWidth());
+				int y = (int) (((double) sequencer.getMicrosecondLength() / (double) sequencer.getMicrosecondPosition()) + Math.random() * canvas.getHeight()) % (int)canvas.getHeight();
 
-					context.strokeLine(x - 2, y, x - 2, y);
-					context.strokeLine(x, y - 2, x, y - 2);
-					context.strokeLine(x - 1, y, x - 1, y);
-					context.strokeLine(x, y - 1, x, y - 1);
-					context.strokeLine(x, y, x, y);
-					context.strokeLine(x + 1, y, x + 1, y);
-					context.strokeLine(x, y + 1, x, y + 1);
-					context.strokeLine(x + 2, y, x + 2, y);
-					context.strokeLine(x, y + 2, x, y + 2);
+				context.strokeLine(x - 2, y, x - 2, y);
+				context.strokeLine(x, y - 2, x, y - 2);
+				context.strokeLine(x - 1, y, x - 1, y);
+				context.strokeLine(x, y - 1, x, y - 1);
+				context.strokeLine(x, y, x, y);
+				context.strokeLine(x + 1, y, x + 1, y);
+				context.strokeLine(x, y + 1, x, y + 1);
+				context.strokeLine(x + 2, y, x + 2, y);
+				context.strokeLine(x, y + 2, x, y + 2);
 			}
 		}
 	}
